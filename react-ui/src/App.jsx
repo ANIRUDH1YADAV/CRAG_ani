@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 
-const API_BASE = 'http://127.0.0.1:8000'
+const API_BASE = 'https://corrective-rag-crag-chatbot-for-document.onrender.com'
 
 function splitResponse(fullResponse) {
   const match = fullResponse.match(/<think>([\s\S]*?)<\/think>/)
