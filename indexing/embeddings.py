@@ -3,7 +3,7 @@ import requests
 
 HF_API_TOKEN = os.getenv("HF_API_TOKEN")
 HF_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-HF_API_URL = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{HF_MODEL}"
+HF_API_URL = f"https://router.huggingface.co/hf-inference/models/{HF_MODEL}/pipeline/feature-extraction"
 
 HEADERS = {"Authorization": f"Bearer {HF_API_TOKEN}"}
 
@@ -24,6 +24,7 @@ def _call_hf_api(texts: list[str]) -> list[list[float]]:
     embeddings = []
     for item in result:
         if isinstance(item[0], list):
+            # token-level embeddings: mean pool to a single sentence vector
             num_tokens = len(item)
             dims = len(item[0])
             pooled = [
@@ -46,6 +47,7 @@ def embed_batch(texts: list[str]) -> list[list[float]]:
     if not texts:
         return []
 
+    # HF free tier works best with small batches — chunk requests
     BATCH_SIZE = 32
     all_embeddings = []
     for i in range(0, len(texts), BATCH_SIZE):
