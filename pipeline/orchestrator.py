@@ -78,9 +78,9 @@ def answer_query(query: str):
 
     # 4. Conditional refinement & web fallback
     if classification == "correct":
-        best_chunks = [chunk for chunk, score in chunk_scores if score >= UPPER_THRESHOLD]
-        for chunk in best_chunks[:1]:  # take top 1
-            refined = refine_document(chunk, query, score)
+        best_chunks = [(chunk, score) for chunk, score in chunk_scores if score >= UPPER_THRESHOLD]
+        for chunk, chunk_score in best_chunks[:1]:  # take top 1
+            refined = refine_document(chunk, query, chunk_score)
             if refined:
                 context_pieces.append(refined["text"])
                 sources.append({
@@ -94,9 +94,9 @@ def answer_query(query: str):
                 })
 
     elif classification == "ambiguous":
-        useful_local = [chunk for chunk, score in chunk_scores if score > LOWER_THRESHOLD]
-        for chunk in useful_local:
-            refined = refine_document(chunk, query, score)
+        useful_local = [(chunk, score) for chunk, score in chunk_scores if score > LOWER_THRESHOLD]
+        for chunk, chunk_score in useful_local:
+            refined = refine_document(chunk, query, chunk_score)
             if refined:
                 context_pieces.append(refined["text"])
                 sources.append({
