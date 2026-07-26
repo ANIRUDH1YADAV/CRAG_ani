@@ -12,7 +12,8 @@ def score_document_relevance(query: str, document_text: str) -> float:
         model=EVALUATOR_MODEL,
         messages=[{"role": "user", "content": prompt}],
         temperature=0,
-        max_tokens=50  # gpt-oss models can return extra tokens/reasoning, give it room
+        max_tokens=300,  # gpt-oss reasoning models need room for internal reasoning + answer
+        extra_body={"reasoning_effort": "none"}  # SDK 0.9.0 doesn't support this as a direct kwarg
     )
 
     raw_content = response.choices[0].message.content.strip()

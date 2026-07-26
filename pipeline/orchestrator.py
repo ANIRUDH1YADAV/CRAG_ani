@@ -18,7 +18,7 @@ def rewrite_query(query: str) -> str:
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
         max_tokens=100,
-        reasoning_effort="none"  # prevents raw <think> reasoning leaking into the rewritten query
+        extra_body={"reasoning_effort": "none"}  # SDK 0.9.0 doesn't support this as a direct kwarg
     )
     return response.choices[0].message.content.strip()
 
