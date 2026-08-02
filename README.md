@@ -25,10 +25,7 @@ The system combines **semantic retrieval**, **retrieval evaluation**, **correcti
 ---
 
 # Architecture
-
-![Architecture](assets/architecture.png)
-![Architecture](./assets/CRAGarchitecture.png)
-
+![Architecture](assets/CRAGarchitecture.png)
 ---
 
 # Tech Stack
