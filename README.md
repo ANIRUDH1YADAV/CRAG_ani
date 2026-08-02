@@ -1,82 +1,83 @@
-# 🤖 Corrective RAG (CRAG) Chatbot for Document Question Answering
+#  Corrective RAG (CRAG) Chatbot for Document Question Answering
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-Frontend-61DAFB.svg)](https://react.dev/)
 [![Pinecone](https://img.shields.io/badge/Pinecone-Vector%20Database-blue.svg)](https://www.pinecone.io/)
 [![Render](https://img.shields.io/badge/Backend-Render-black.svg)](https://render.com/)
 [![Vercel](https://img.shields.io/badge/Frontend-Vercel-black.svg)](https://vercel.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A web application that allows users to upload documents and ask questions using natural language. The system retrieves the most relevant information from the uploaded documents, evaluates whether the retrieved context is reliable, and automatically performs a web search whenever the document alone cannot provide a confident answer.
+A document question-answering application built using the **Corrective Retrieval-Augmented Generation (CRAG)** approach.
 
-Unlike a traditional Retrieval-Augmented Generation (RAG) pipeline, this project follows a **Corrective Retrieval-Augmented Generation (CRAG)** workflow, where retrieved documents are evaluated before answer generation. If the retrieved information is weak or ambiguous, the system rewrites the query, searches the web using Tavily, and combines the most relevant information before generating the final response.
+Upload your own documents, ask questions in natural language, and receive accurate, context-aware answers. Instead of relying only on retrieved documents, the application evaluates whether the retrieved context is actually useful. If the retrieved information is insufficient, the system automatically rewrites the query, searches the web, and generates a better response.
+
+This significantly reduces hallucinations compared to a traditional RAG pipeline.
 
 ---
 
 # 🚀 Features
 
-### 📄 Upload Your Documents
+### 📄 Upload Documents
 
-Upload your own documents and build a searchable knowledge base.
+Upload your own knowledge base in the form of:
 
-Supported formats:
-
-- PDF (.pdf)
-- Microsoft Word (.docx)
+- PDF Documents
+- Word Documents (.docx)
 - Text Files (.txt)
 
-After uploading:
+After uploading, the application automatically:
 
-- Documents are cleaned and processed
-- Text is split into semantic chunks
-- Chunks are converted into vector embeddings
-- Embeddings are stored inside **Pinecone** for semantic retrieval
+- extracts text
+- chunks the documents
+- generates vector embeddings
+- stores them inside **Pinecone**
 
 ---
 
 ### 💬 Ask Questions
 
-Ask questions in natural language just like chatting with an AI assistant.
+Ask questions naturally.
 
-The system automatically:
+The application:
 
-- Retrieves relevant document chunks
-- Evaluates retrieval quality
-- Improves retrieval if necessary
-- Generates context-aware answers
+- retrieves relevant document chunks
+- evaluates retrieval quality
+- improves retrieval if necessary
+- generates grounded answers
 
 ---
 
-### 🧠 Intelligent Retrieval Evaluation
+### 🧠 Corrective Retrieval
 
-Instead of directly trusting retrieved documents, every retrieved chunk is evaluated by an LLM.
+Unlike traditional RAG systems, retrieved documents are **not trusted immediately**.
 
-Each retrieved document is classified as:
+Each retrieved document is evaluated using an LLM and classified as:
 
 - ✅ Correct
 - ⚠️ Ambiguous
 - ❌ Incorrect
 
-This helps reduce hallucinations and improves answer quality.
+Depending on the evaluation score, the system either:
+
+- answers directly,
+- rewrites the query,
+- or performs a web search.
 
 ---
 
-### 🌍 Automatic Web Search
+### 🌍 Web Search Fallback
 
-If the uploaded documents do not contain sufficient information, the system automatically:
+Whenever the uploaded documents cannot confidently answer a question, the application automatically:
 
-- Rewrites the user query
-- Searches the web using **Tavily**
-- Retrieves the most relevant search results
-- Combines web information with document context
-- Generates a more reliable answer
+- rewrites the query
+- searches the web using Tavily
+- retrieves relevant web content
+- merges document and web context
+- generates the final answer
 
 ---
 
-### ⚡ Fast & Scalable
-
-The application is built using a modern full-stack architecture.
+### ⚡ Modern Full-Stack Application
 
 - FastAPI Backend
 - React Frontend
@@ -86,122 +87,133 @@ The application is built using a modern full-stack architecture.
 
 ---
 
-# 🏗️ System Architecture
+# 🏗️ Architecture
 
 ![Architecture](assets/CRAGarchitecture.png)
+
+The architecture consists of four major stages:
+
+- Document Processing
+- Retrieval & Evaluation
+- Corrective Retrieval
+- Answer Generation
+
+---
+
+# 🔄 Workflow
+
+![Workflow](assets/workflow%20of%20CRAG.png)
+
+The workflow is implemented using **LangGraph**.
+
+It follows these steps:
+
+1. Retrieve relevant documents.
+2. Evaluate every retrieved document.
+3. Decide whether retrieval is sufficient.
+4. Rewrite the query if required.
+5. Search the web when local documents are insufficient.
+6. Refine retrieved information.
+7. Generate the final answer.
+
+---
+
+# 💻 Application Preview
+
+![Application](assets/application-preview.png)
+
+The interface allows users to:
+
+- Upload documents
+- Index them into Pinecone
+- Ask natural language questions
+- View retrieved sources
+- Inspect pipeline traces
+- See retrieved chunks
+- Understand document evaluation
+- View the final generated context
 
 ---
 
 # ⚙️ How It Works
 
-The application follows a multi-stage Corrective RAG pipeline.
+The application follows a multi-stage CRAG pipeline.
 
-### Step 1 — Upload Documents
+### 1. Upload Documents
 
-Users upload PDF, DOCX, or TXT files.
-
-↓
-
-### Step 2 — Document Processing
-
-The uploaded documents are:
-
-- Cleaned
-- Chunked into smaller segments
-- Converted into vector embeddings
+Users upload PDF, DOCX or TXT files.
 
 ↓
 
-### Step 3 — Store Embeddings
+### 2. Document Processing
 
-All embeddings are stored inside **Pinecone**, enabling fast semantic similarity search.
-
-↓
-
-### Step 4 — Ask a Question
-
-The user submits a natural language question.
+Documents are cleaned, chunked and converted into vector embeddings.
 
 ↓
 
-### Step 5 — Retrieve Relevant Documents
+### 3. Store Embeddings
 
-The system retrieves the Top-K most relevant document chunks from Pinecone.
-
-↓
-
-### Step 6 — Evaluate Retrieved Documents
-
-Instead of immediately generating an answer, every retrieved document is evaluated using **Llama 3.1 8B**.
-
-Documents are categorized as:
-
-- Correct
-- Ambiguous
-- Incorrect
+Embeddings are stored inside **Pinecone**.
 
 ↓
 
-### Step 7 — Corrective Retrieval
+### 4. Semantic Retrieval
+
+Relevant document chunks are retrieved.
+
+↓
+
+### 5. Retrieval Evaluation
+
+Every retrieved document is scored using **Llama 3.1 8B**.
+
+↓
+
+### 6. Corrective Retrieval
 
 Depending on the evaluation:
 
-**Correct**
-
-- Continue with retrieved documents.
-
-**Ambiguous**
-
-- Rewrite the query.
-- Perform a web search.
-
-**Incorrect**
-
-- Ignore retrieved documents.
-- Search the web directly.
+- Continue with retrieved documents
+- Rewrite the query
+- Perform web search
+- Merge retrieved context
 
 ↓
 
-### Step 8 — Context Construction
+### 7. Answer Generation
 
-Relevant document chunks and web search results are merged into a single context.
-
-↓
-
-### Step 9 — Answer Generation
-
-The final context is sent to **Qwen3-32B**, which generates the final response.
+The final context is sent to **Qwen3-32B**, which generates the final answer.
 
 ---
 
-# 💻 Tech Stack
+# 🛠 Tech Stack
 
 ## Backend
 
 - FastAPI
-- Python
 - LangChain
+- LangGraph
+- Python
+
+## AI Models
+
+- all-MiniLM-L6-v2 (Embeddings)
+- Llama-3.1-8B (Retrieval Evaluation)
+- Qwen3-32B (Answer Generation)
+
+## Vector Database
+
 - Pinecone
-- Sentence Transformers
-- HuggingFace Embeddings
+
+## Search Engine
+
 - Tavily Search API
-- Groq API
 
 ## Frontend
 
 - React
 - Vite
 - Axios
-
-## AI Models
-
-- all-MiniLM-L6-v2 (Embeddings)
-- Llama 3.1 8B (Retrieval Evaluation)
-- Qwen3-32B (Answer Generation)
-
-## Database
-
-- Pinecone Vector Database
 
 ## Deployment
 
@@ -210,7 +222,7 @@ The final context is sent to **Qwen3-32B**, which generates the final response.
 
 ---
 
-# 📂 Project Structure
+# 📁 Project Structure
 
 ```text
 Corrective-RAG
@@ -222,10 +234,9 @@ Corrective-RAG
 ├── indexing/
 ├── pipeline/
 ├── processing/
+├── react-ui/
 ├── retrieval/
 ├── utils/
-│
-├── react-ui/
 │
 ├── api.py
 ├── app.py
@@ -235,25 +246,16 @@ Corrective-RAG
 
 ---
 
-# 📡 API Endpoints
+# 🔮 Future Improvements
 
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/upload` | Upload documents |
-| POST | `/query` | Ask questions |
-| GET | `/health` | Health check |
-
----
-
-# 🎯 Future Improvements
-
-- Hybrid Search (Dense + Sparse Retrieval)
-- Cross-Encoder Re-ranking
-- Streaming Responses
+- Hybrid Search
+- Cross Encoder Re-ranking
 - Conversation Memory
+- Streaming Responses
 - Authentication
-- Multi-document Conversations
-- Source Citation Highlighting
+- Multi-document Chat
+- Source Highlighting
+- Response Citations
 
 ---
 
