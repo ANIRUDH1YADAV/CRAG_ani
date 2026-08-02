@@ -1,72 +1,221 @@
-# Corrective-RAG (CRAG) Chatbot for Document Question Answering
+# 🤖 Corrective RAG (CRAG) Chatbot for Document Question Answering
 
-A production-ready **Corrective Retrieval-Augmented Generation (CRAG)** chatbot that enables users to upload documents (PDF, DOCX, and TXT), ask natural language questions, and receive context-aware responses using Large Language Models.
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-Frontend-61DAFB.svg)](https://react.dev/)
+[![Pinecone](https://img.shields.io/badge/Pinecone-Vector%20Database-blue.svg)](https://www.pinecone.io/)
+[![Render](https://img.shields.io/badge/Backend-Render-black.svg)](https://render.com/)
+[![Vercel](https://img.shields.io/badge/Frontend-Vercel-black.svg)](https://vercel.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-The system combines **semantic retrieval**, **retrieval evaluation**, **corrective filtering**, **query rewriting**, **web search fallback**, and **LLM-based answer generation** to improve response quality when retrieved documents are insufficient.
+A web application that allows users to upload documents and ask questions using natural language. The system retrieves the most relevant information from the uploaded documents, evaluates whether the retrieved context is reliable, and automatically performs a web search whenever the document alone cannot provide a confident answer.
 
----
-
-# Features
-
-- Upload PDF, DOCX, and TXT documents
-- Semantic document chunking
-- Embedding generation using **all-MiniLM-L6-v2**
-- Vector storage with **Pinecone**
-- Semantic similarity search
-- Retrieval evaluation using **Llama 3.1 8B**
-- Corrective Retrieval (CRAG) pipeline
-- Query rewriting for ambiguous queries
-- Web search fallback using **Tavily**
-- Context-aware answer generation using **Qwen3-32B**
-- FastAPI backend
-- React frontend
-- Deployed using Render and Vercel
+Unlike a traditional Retrieval-Augmented Generation (RAG) pipeline, this project follows a **Corrective Retrieval-Augmented Generation (CRAG)** workflow, where retrieved documents are evaluated before answer generation. If the retrieved information is weak or ambiguous, the system rewrites the query, searches the web using Tavily, and combines the most relevant information before generating the final response.
 
 ---
 
-# Architecture
+# 🚀 Features
+
+### 📄 Upload Your Documents
+
+Upload your own documents and build a searchable knowledge base.
+
+Supported formats:
+
+- PDF (.pdf)
+- Microsoft Word (.docx)
+- Text Files (.txt)
+
+After uploading:
+
+- Documents are cleaned and processed
+- Text is split into semantic chunks
+- Chunks are converted into vector embeddings
+- Embeddings are stored inside **Pinecone** for semantic retrieval
+
+---
+
+### 💬 Ask Questions
+
+Ask questions in natural language just like chatting with an AI assistant.
+
+The system automatically:
+
+- Retrieves relevant document chunks
+- Evaluates retrieval quality
+- Improves retrieval if necessary
+- Generates context-aware answers
+
+---
+
+### 🧠 Intelligent Retrieval Evaluation
+
+Instead of directly trusting retrieved documents, every retrieved chunk is evaluated by an LLM.
+
+Each retrieved document is classified as:
+
+- ✅ Correct
+- ⚠️ Ambiguous
+- ❌ Incorrect
+
+This helps reduce hallucinations and improves answer quality.
+
+---
+
+### 🌍 Automatic Web Search
+
+If the uploaded documents do not contain sufficient information, the system automatically:
+
+- Rewrites the user query
+- Searches the web using **Tavily**
+- Retrieves the most relevant search results
+- Combines web information with document context
+- Generates a more reliable answer
+
+---
+
+### ⚡ Fast & Scalable
+
+The application is built using a modern full-stack architecture.
+
+- FastAPI Backend
+- React Frontend
+- Pinecone Vector Database
+- Render Deployment
+- Vercel Deployment
+
+---
+
+# 🏗️ System Architecture
+
 ![Architecture](assets/CRAGarchitecture.png)
+
 ---
 
-# Tech Stack
+# ⚙️ How It Works
 
-### Backend
+The application follows a multi-stage Corrective RAG pipeline.
+
+### Step 1 — Upload Documents
+
+Users upload PDF, DOCX, or TXT files.
+
+↓
+
+### Step 2 — Document Processing
+
+The uploaded documents are:
+
+- Cleaned
+- Chunked into smaller segments
+- Converted into vector embeddings
+
+↓
+
+### Step 3 — Store Embeddings
+
+All embeddings are stored inside **Pinecone**, enabling fast semantic similarity search.
+
+↓
+
+### Step 4 — Ask a Question
+
+The user submits a natural language question.
+
+↓
+
+### Step 5 — Retrieve Relevant Documents
+
+The system retrieves the Top-K most relevant document chunks from Pinecone.
+
+↓
+
+### Step 6 — Evaluate Retrieved Documents
+
+Instead of immediately generating an answer, every retrieved document is evaluated using **Llama 3.1 8B**.
+
+Documents are categorized as:
+
+- Correct
+- Ambiguous
+- Incorrect
+
+↓
+
+### Step 7 — Corrective Retrieval
+
+Depending on the evaluation:
+
+**Correct**
+
+- Continue with retrieved documents.
+
+**Ambiguous**
+
+- Rewrite the query.
+- Perform a web search.
+
+**Incorrect**
+
+- Ignore retrieved documents.
+- Search the web directly.
+
+↓
+
+### Step 8 — Context Construction
+
+Relevant document chunks and web search results are merged into a single context.
+
+↓
+
+### Step 9 — Answer Generation
+
+The final context is sent to **Qwen3-32B**, which generates the final response.
+
+---
+
+# 💻 Tech Stack
+
+## Backend
 
 - FastAPI
+- Python
 - LangChain
 - Pinecone
 - Sentence Transformers
 - HuggingFace Embeddings
 - Tavily Search API
 - Groq API
-- Python
 
-### Frontend
+## Frontend
 
 - React
 - Vite
 - Axios
 
-### Vector Database
+## AI Models
 
-- Pinecone
+- all-MiniLM-L6-v2 (Embeddings)
+- Llama 3.1 8B (Retrieval Evaluation)
+- Qwen3-32B (Answer Generation)
 
-### Deployment
+## Database
+
+- Pinecone Vector Database
+
+## Deployment
 
 - Render
 - Vercel
 
 ---
 
-# Project Structure
+# 📂 Project Structure
 
 ```text
 Corrective-RAG
 │
-├── api.py
-├── app.py
-├── requirements.txt
-│
+├── assets/
 ├── core/
 ├── evaluation/
 ├── generation/
@@ -78,124 +227,37 @@ Corrective-RAG
 │
 ├── react-ui/
 │
+├── api.py
+├── app.py
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-# Workflow
-
-### 1. Document Upload
-
-Users upload PDF, DOCX, or TXT documents.
-
-↓
-
-### 2. Document Processing
-
-- Text extraction
-- Cleaning
-- Chunking
-
-↓
-
-### 3. Embedding Generation
-
-Document chunks are converted into vector embeddings using **all-MiniLM-L6-v2**.
-
-↓
-
-### 4. Vector Storage
-
-Embeddings are stored in **Pinecone**.
-
-↓
-
-### 5. Query Processing
-
-The user submits a natural language query.
-
-↓
-
-### 6. Retrieval
-
-Top-K relevant chunks are retrieved from the vector database.
-
-↓
-
-### 7. Retrieval Evaluation
-
-Each retrieved document is scored by an LLM and classified as:
-
-- Correct
-- Ambiguous
-- Incorrect
-
-↓
-
-### 8. Corrective Retrieval
-
-Depending on the evaluation:
-
-- Retrieve documents directly
-- Rewrite the query
-- Perform web search using Tavily
-
-↓
-
-### 9. Context Construction
-
-Relevant document chunks and web search results are combined into a unified context.
-
-↓
-
-### 10. Answer Generation
-
-The final answer is generated using **Qwen3-32B**.
-
----
-
-# API Endpoints
+# 📡 API Endpoints
 
 | Method | Endpoint | Description |
-|----------|----------|-------------|
+|---------|----------|-------------|
 | POST | `/upload` | Upload documents |
 | POST | `/query` | Ask questions |
 | GET | `/health` | Health check |
 
 ---
 
-# Deployment
-
-### Backend
-
-**Render**
-
-### Frontend
-
-**Vercel**
-
----
-
-# Future Enhancements
+# 🎯 Future Improvements
 
 - Hybrid Search (Dense + Sparse Retrieval)
-- Cross-Encoder Reranking
+- Cross-Encoder Re-ranking
 - Streaming Responses
-- Multi-document Conversations
-- Authentication
-- Citation Highlighting
 - Conversation Memory
+- Authentication
+- Multi-document Conversations
+- Source Citation Highlighting
 
 ---
 
-# Acknowledgements
-
-This project is based on the **Corrective Retrieval-Augmented Generation (CRAG)** methodology and provides a practical implementation using FastAPI, React, Pinecone, Tavily Search, and modern Large Language Models.
-
----
-
-# Author
+# 👨‍💻 Author
 
 **Anirudh Yadav**
 
